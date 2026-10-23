@@ -1,0 +1,527 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAT &amp; MOUSE: THE DARK MAZE — Main Menu</title>
+  <!-- Google Fonts: Retro 8-bit & 16-bit Pixel Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=Silkscreen:wght@400;700&amp;family=VT323&amp;family=DotGothic16&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom retro pixel typography classes */
+    .font-pixel-title {
+      font-family: 'Press Start 2P', monospace;
+    }
+    .font-pixel-sub {
+      font-family: 'Silkscreen', monospace;
+    }
+    .font-pixel-ui {
+      font-family: 'VT323', monospace;
+      letter-spacing: 0.08em;
+    }
+
+    /* CRT scanline & retro monitor effects */
+    .scanlines {
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0),
+        rgba(255,255,255,0) 50%,
+        rgba(0, 0, 0, 0.35) 50%,
+        rgba(0, 0, 0, 0.35)
+      );
+      background-size: 100% 4px;
+      pointer-events: none;
+    }
+
+    .crt-vignette {
+      background: radial-gradient(circle at 65% 50%, rgba(5,6,9,0.1) 0%, rgba(5,6,9,0.7) 65%, rgba(5,6,9,0.95) 100%);
+      pointer-events: none;
+    }
+
+    /* Pixel art border box styling */
+    .pixel-box-cyan {
+      box-shadow: 
+        0 0 0 3px #050609,
+        0 0 0 6px #48D9E8,
+        0 0 25px rgba(72, 217, 232, 0.45),
+        inset 0 -4px 0 0 #1b8a95;
+    }
+    .pixel-box-gold {
+      box-shadow: 
+        0 0 0 3px #050609,
+        0 0 0 6px #FFD166,
+        0 0 20px rgba(255, 209, 102, 0.3),
+        inset 0 -4px 0 0 #b38827;
+    }
+    .pixel-box-secondary {
+      box-shadow: 
+        0 0 0 2px #050609,
+        0 0 0 4px #243b55,
+        inset 0 -3px 0 0 #0d1724;
+    }
+
+    /* Pixel button hover animation */
+    .btn-pixel {
+      image-rendering: pixelated;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-pixel:hover {
+      transform: translateX(8px) scale(1.02);
+    }
+    .btn-pixel:active {
+      transform: translateX(4px) translateY(2px) scale(0.99);
+    }
+
+    /* Pulsing play button glow */
+    @keyframes cyanPulse {
+      0%, 100% {
+        box-shadow: 
+          0 0 0 3px #050609,
+          0 0 0 6px #48D9E8,
+          0 0 30px rgba(72, 217, 232, 0.55),
+          0 0 60px rgba(72, 217, 232, 0.2),
+          inset 0 -4px 0 0 #1b8a95;
+      }
+      50% {
+        box-shadow: 
+          0 0 0 3px #050609,
+          0 0 0 6px #7bedf8,
+          0 0 45px rgba(72, 217, 232, 0.85),
+          0 0 85px rgba(72, 217, 232, 0.4),
+          inset 0 -4px 0 0 #28abc4;
+      }
+    }
+    .play-glow {
+      animation: cyanPulse 2.4s infinite ease-in-out;
+    }
+
+    /* Subtle title glow and chromatic aberration */
+    @keyframes titleGlitch {
+      0%, 93%, 100% {
+        text-shadow: 
+          3px 3px 0 #101B2B,
+          6px 6px 0 #050609,
+          0 0 20px rgba(72, 217, 232, 0.4);
+      }
+      94% {
+        text-shadow: 
+          -3px 2px 0 #FF3434,
+          3px -2px 0 #48D9E8,
+          6px 6px 0 #050609;
+      }
+      96% {
+        text-shadow: 
+          2px -1px 0 #FFD166,
+          -2px 2px 0 #FF3434,
+          5px 5px 0 #050609;
+      }
+    }
+    .horror-title {
+      animation: titleGlitch 6s infinite ease-in-out;
+    }
+
+    /* Floating retro ambient particles */
+    @keyframes floatParticle {
+      0% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
+      50% { transform: translateY(-20px) translateX(10px); opacity: 0.85; }
+      100% { transform: translateY(-40px) translateX(-5px); opacity: 0; }
+    }
+    .particle {
+      position: absolute;
+      background: #48D9E8;
+      box-shadow: 0 0 8px #48D9E8;
+      border-radius: 1px;
+      pointer-events: none;
+      animation: floatParticle linear infinite;
+    }
+
+    /* Audio / modal retro box */
+    .retro-modal-backdrop {
+      backdrop-filter: blur(6px);
+      background: rgba(5, 6, 9, 0.85);
+    }
+  </style>
+</head>
+<body class="bg-[#050609] text-[#F4F0E8] overflow-hidden select-none w-screen h-screen m-0 p-0 font-pixel-ui">
+
+  <!-- Main Game Container: Aspect Ratio 16:9 Responsive Wrapper -->
+  <div class="relative w-full h-full flex items-center justify-center bg-[#050609] overflow-hidden">
+
+    <!-- Screen Wrapper: Locked 16:9 layout -->
+    <div class="relative w-full h-full max-w-[1920px] max-h-[1080px] overflow-hidden flex flex-col justify-between">
+
+      <!-- Background Cinematic Pixel Art Artwork (Cat & Looming Mouse) -->
+      <div class="absolute inset-0 w-full h-full overflow-hidden">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDn66uhAR9RG_hwqfm2_Zb67f1auaUeDlUTnT9curOe8B-m9e3asimkcdnEr6UG0_7RPPYLX-TqcyO9l2huRFqhfH3oxKSBVV4wBCCMo_TH0e3UdaJNE9E4KkogWZ-mTFspC0hiltE2KNP6yEsaY5CJU2C41RTqD9OyGL0jX3Ot0DEbTQ3EuAZtDoeaHMo2Ew4xb-0AwHZqokgt7FDGkIIWGo9GS_kym-J93WJvMZX2mQRviJhBsp7M" alt="CAT &amp; MOUSE: THE DARK MAZE 16-bit pixel art title screen background" class="w-full h-full object-cover object-center filter brightness-[0.98] contrast-[1.08] scale-100" style="image-rendering: auto;">
+        <!-- Atmospheric Vignette & Contrast Gradients for UI Legibility -->
+        <div class="absolute inset-0 bg-gradient-to-r from-[#050609] via-[#050609]/75 to-transparent w-[55%]"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#050609] via-transparent to-[#050609]/60 h-full"></div>
+        <div class="absolute inset-0 crt-vignette"></div>
+        <!-- Scanlines for 16-bit retro monitor feel -->
+        <div class="absolute inset-0 scanlines opacity-45 pointer-events-none"></div>
+
+        <!-- Animated Floating Cyan/Gold Pixel Spores -->
+        <div class="particle w-1.5 h-1.5 left-[54%] top-[72%]" style="animation-duration: 4.5s; animation-delay: 0.2s;"></div>
+        <div class="particle w-2 h-2 left-[58%] top-[78%]" style="animation-duration: 5.5s; animation-delay: 1.5s; background: #FFD166; box-shadow: 0 0 10px #FFD166;"></div>
+        <div class="particle w-1 h-1 left-[63%] top-[68%]" style="animation-duration: 6s; animation-delay: 2.8s;"></div>
+        <div class="particle w-1.5 h-1.5 left-[51%] top-[82%]" style="animation-duration: 4.8s; animation-delay: 3.2s; background: #FFD166; box-shadow: 0 0 8px #FFD166;"></div>
+        <div class="particle w-2 h-2 left-[48%] top-[65%]" style="animation-duration: 7s; animation-delay: 0.8s;"></div>
+      </div>
+
+      <!-- Top System Bar / Game Metadata -->
+      <header class="relative z-20 flex items-center justify-between px-8 py-5 text-sm tracking-wider">
+        <!-- Studio & Build Info -->
+        <div class="flex items-center space-x-6 text-[#F4F0E8]/70">
+          <div class="flex items-center space-x-2 bg-[#101B2B]/80 border border-[#243b55] px-3 py-1 rounded">
+            <span class="w-2 h-2 rounded-full bg-[#48D9E8] animate-ping"></span>
+            <span class="font-pixel-sub text-[11px] text-[#48D9E8]">VER 1.0.4 - PIXATHON EDITION</span>
+          </div>
+          <span class="hidden md:inline font-pixel-sub text-[10px] text-[#F4F0E8]/50">ARCADE ENGINE 16-BIT</span>
+        </div>
+
+        <!-- Audio & Screen Quick Toggles -->
+        <div class="flex items-center space-x-4">
+          <button id="soundToggle" onclick="toggleAudio()" class="flex items-center space-x-2 bg-[#101B2B]/85 hover:bg-[#1a2c47] border border-[#243b55] hover:border-[#48D9E8] text-[#F4F0E8] px-3.5 py-1.5 transition-all text-xs font-pixel-sub cursor-pointer rounded">
+            <span id="soundIcon" class="">🔊</span>
+            <span id="soundText" class="text-[11px]">BGM: ON</span>
+          </button>
+          <button onclick="toggleFullscreen()" class="flex items-center space-x-1 bg-[#101B2B]/85 hover:bg-[#1a2c47] border border-[#243b55] hover:border-[#FFD166] text-[#F4F0E8] px-3.5 py-1.5 transition-all text-xs font-pixel-sub cursor-pointer rounded" title="Toggle Fullscreen">
+            <span class="">⛶</span>
+            <span class="text-[11px] hidden sm:inline">FULLSCREEN</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Content Grid: Left UI Menu & Right Focus on Character Tension -->
+      <main class="relative z-20 flex-1 flex flex-col justify-center px-10 md:px-16 lg:px-20 py-2">
+        <div class="max-w-2xl">
+          
+          <!-- Category / Badge -->
+          <div class="inline-flex items-center space-x-2.5 px-3 py-1 mb-4 bg-[#FF3434]/15 border-l-4 border-[#FF3434] text-[#FF3434] font-pixel-sub text-[11px] tracking-widest uppercase">
+            <span class="inline-block w-1.5 h-1.5 bg-[#FF3434] rounded-sm"></span>
+            <span class="">SURVIVAL HORROR • RETRO MAZE RUNNER</span>
+          </div>
+
+          <!-- Main Game Title -->
+          <div class="mb-4">
+            <h1 class="font-pixel-title text-4xl sm:text-5xl lg:text-6xl text-[#F4F0E8] horror-title tracking-tight leading-none mb-3">
+              CAT <span class="text-[#FFD166]">&amp;</span> MOUSE
+            </h1>
+            
+            <!-- Subtitle with Glowing Accents -->
+            <div class="flex items-center space-x-3">
+              <span class="h-[2px] w-8 sm:w-12 bg-gradient-to-r from-transparent to-[#48D9E8]"></span>
+              <h2 class="font-pixel-sub text-lg sm:text-2xl lg:text-3xl font-bold tracking-[0.25em] text-[#48D9E8] drop-shadow-[0_0_12px_rgba(72,217,232,0.6)]">
+                THE DARK MAZE
+              </h2>
+              <span class="h-[2px] w-12 sm:w-16 bg-gradient-to-r from-[#48D9E8] to-transparent"></span>
+            </div>
+          </div>
+
+          <!-- Narrative Hook / Atmosphere Blurb -->
+          <p class="font-pixel-ui text-xl sm:text-2xl text-[#F4F0E8]/75 mb-7 max-w-lg leading-relaxed drop-shadow">
+            Deep within the cold stone corridors, the crumbs are glowing... but hunger isn't the only beast hunting in the shadows.
+          </p>
+
+          <!-- Interactive Menu Buttons (Vertical Stack) -->
+          <nav aria-label="Main Menu" class="flex flex-col space-y-4 max-w-md">
+
+            <!-- 1. PLAY BUTTON (Primary CTA with pulsing cyan glow) -->
+            <button id="btnPlay" onclick="triggerAction('Starting Game...', 'Loading Maze Zone 1 — The Damp Catacombs...')" class="btn-pixel play-glow group relative flex items-center justify-between w-full bg-[#48D9E8] text-[#050609] px-7 py-4 font-pixel-title text-base sm:text-lg tracking-wider cursor-pointer border-2 border-white/60 active:scale-95">
+              <div class="flex items-center space-x-3.5">
+                <span class="text-xl sm:text-2xl transition-transform duration-200 group-hover:translate-x-1.5 text-[#050609]">▶</span>
+                <span class="font-bold">PLAY GAME</span>
+              </div>
+              <span class="font-pixel-sub text-xs bg-[#050609] text-[#48D9E8] px-2.5 py-1 rounded font-normal group-hover:bg-[#101B2B] transition-colors">
+                ENTER MAZE
+              </span>
+            </button>
+
+            <!-- 2. LEVEL SELECT (Secondary with Golden Highlight) -->
+            
+
+            <!-- Secondary Action Row (HOW TO PLAY & SETTINGS) -->
+            
+
+          </nav>
+
+          <!-- Warning / Tension Indicator Pill -->
+          <div class="mt-6 flex items-center space-x-3 text-xs font-pixel-sub text-[#FF3434]/90 bg-[#050609]/80 border border-[#FF3434]/30 px-3.5 py-2 max-w-md rounded">
+            <span class="inline-block w-2 h-2 bg-[#FF3434] rounded-full animate-ping"></span>
+            <span class="tracking-wide">BEWARE: Sound attracts the Vermin Lord in darkness.</span>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- Bottom Footer: Tagline, Controls Cheat-sheet & Credits -->
+      <footer class="relative z-20 flex flex-col sm:flex-row items-center justify-between px-8 py-4 bg-gradient-to-t from-[#050609] to-transparent text-xs text-[#F4F0E8]/60 font-pixel-sub border-t border-[#101B2B]/60">
+        <!-- Tagline -->
+        <div class="flex items-center space-x-3 mb-2 sm:mb-0">
+          <span class="w-2 h-2 bg-[#FFD166] rotate-45"></span>
+          <span class="text-sm font-bold tracking-[0.2em] text-[#F4F0E8]">A PIXEL HORROR ADVENTURE</span>
+        </div>
+
+        <!-- Keyboard Controls Helper -->
+        
+
+        <!-- Copyright / Jam Tag -->
+        <div class="text-[10px] text-[#F4F0E8]/40 tracking-wider">
+          © 2025 PIXATHON STUDIOS • ALL RIGHTS RESERVED
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- MODAL: HOW TO PLAY -->
+  <div id="howToPlayModal" class="hidden fixed inset-0 z-50 retro-modal-backdrop flex items-center justify-center p-4">
+    <div class="relative w-full max-w-xl bg-[#0c1420] border-4 border-[#48D9E8] p-6 shadow-[0_0_50px_rgba(72,217,232,0.4)]">
+      <div class="flex justify-between items-center border-b-2 border-[#243b55] pb-3 mb-4">
+        <div class="flex items-center space-x-2">
+          <span class="text-[#48D9E8] text-xl">?</span>
+          <h3 class="font-pixel-title text-base text-[#48D9E8]">HOW TO PLAY</h3>
+        </div>
+        <button onclick="closeModal('howToPlayModal')" class="text-[#F4F0E8] hover:text-[#FF3434] font-pixel-title text-sm cursor-pointer">[X]</button>
+      </div>
+      
+      <div class="space-y-4 font-pixel-ui text-xl text-[#F4F0E8]/90">
+        <div class="flex items-start space-x-3">
+          <span class="text-[#FFD166] text-2xl leading-none">●</span>
+          <p class=""><strong class="text-[#FFD166] font-pixel-sub text-sm">COLLECT THE ORBS:</strong> Navigate the dark labyrinths and gather all golden memory orbs to unlock the exit portal.</p>
+        </div>
+        <div class="flex items-start space-x-3">
+          <span class="text-[#FF3434] text-2xl leading-none">●</span>
+          <p class=""><strong class="text-[#FF3434] font-pixel-sub text-sm">AVOID THE VERMIN LORD:</strong> The giant mouse hunts by sound and scent. If its glowing eyes turn scarlet, flee into the narrow corridors immediately!</p>
+        </div>
+        <div class="flex items-start space-x-3">
+          <span class="text-[#48D9E8] text-2xl leading-none">●</span>
+          <p class=""><strong class="text-[#48D9E8] font-pixel-sub text-sm">USE CAT REFLEXES:</strong> Squeeze through cracked stone blocks where the giant mouse cannot follow.</p>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-[#243b55] flex justify-end">
+        <button onclick="closeModal('howToPlayModal')" class="bg-[#48D9E8] text-[#050609] font-pixel-title text-xs px-5 py-2.5 hover:bg-white cursor-pointer">
+          UNDERSTOOD
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LEVEL SELECT -->
+  <div id="levelModal" class="hidden fixed inset-0 z-50 retro-modal-backdrop flex items-center justify-center p-4">
+    <div class="relative w-full max-w-2xl bg-[#0c1420] border-4 border-[#FFD166] p-6 shadow-[0_0_50px_rgba(255,209,102,0.3)]">
+      <div class="flex justify-between items-center border-b-2 border-[#243b55] pb-3 mb-4">
+        <div class="flex items-center space-x-2">
+          <span class="text-[#FFD166] text-xl">❖</span>
+          <h3 class="font-pixel-title text-base text-[#FFD166]">ZONE SELECTION</h3>
+        </div>
+        <button onclick="closeModal('levelModal')" class="text-[#F4F0E8] hover:text-[#FF3434] font-pixel-title text-sm cursor-pointer">[X]</button>
+      </div>
+
+      <!-- Level Cards Grid -->
+      <div class="grid grid-cols-3 gap-3 font-pixel-sub text-xs">
+        <button onclick="triggerAction('Launching Zone 01', 'Entering The Damp Sewers...')" class="p-3 bg-[#101B2B] hover:bg-[#48D9E8] hover:text-[#050609] border-2 border-[#48D9E8] text-left transition-colors cursor-pointer">
+          <div class="text-[10px] text-[#48D9E8] group-hover:text-[#050609]">ZONE 01</div>
+          <div class="font-bold text-sm my-1">SEWER MAZE</div>
+          <div class="text-[9px] opacity-75">★ UNLOCKED</div>
+        </button>
+        <button onclick="triggerAction('Launching Zone 02', 'Entering The Crypt of Whispers...')" class="p-3 bg-[#101B2B] hover:bg-[#48D9E8] hover:text-[#050609] border border-[#243b55] text-left transition-colors cursor-pointer">
+          <div class="text-[10px] text-[#48D9E8]">ZONE 02</div>
+          <div class="font-bold text-sm my-1">BONE CRYPT</div>
+          <div class="text-[9px] text-[#FFD166]">3 / 3 ORBS</div>
+        </button>
+        <button class="p-3 bg-[#0a0f18] border border-[#1b2b3f] text-[#F4F0E8]/40 text-left cursor-not-allowed">
+          <div class="text-[10px]">ZONE 03</div>
+          <div class="font-bold text-sm my-1">CLOCK TOWER</div>
+          <div class="text-[9px] text-[#FF3434]">🔒 LOCKED</div>
+        </button>
+        <button class="p-3 bg-[#0a0f18] border border-[#1b2b3f] text-[#F4F0E8]/40 text-left cursor-not-allowed">
+          <div class="text-[10px]">ZONE 04</div>
+          <div class="font-bold text-sm my-1">THE SANCTUM</div>
+          <div class="text-[9px] text-[#FF3434]">🔒 LOCKED</div>
+        </button>
+        <button class="p-3 bg-[#0a0f18] border border-[#1b2b3f] text-[#F4F0E8]/40 text-left cursor-not-allowed">
+          <div class="text-[10px]">ZONE 05</div>
+          <div class="font-bold text-sm my-1">DEPTHS OF FEAR</div>
+          <div class="text-[9px] text-[#FF3434]">🔒 LOCKED</div>
+        </button>
+        <button class="p-3 bg-[#0a0f18] border border-[#1b2b3f] text-[#FF3434]/40 text-left cursor-not-allowed">
+          <div class="text-[10px]">FINAL ZONE</div>
+          <div class="font-bold text-sm my-1">MOUSE NEST</div>
+          <div class="text-[9px] text-[#FF3434]">💀 BOSS</div>
+        </button>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-[#243b55] flex justify-between items-center text-xs font-pixel-sub text-[#F4F0E8]/60">
+        <span class="">COLLECT ALL ORBS TO UNLOCK ADVANCED ZONES</span>
+        <button onclick="closeModal('levelModal')" class="bg-[#101B2B] hover:bg-[#243b55] border border-[#FFD166] text-[#FFD166] px-4 py-2 cursor-pointer">
+          CLOSE
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SETTINGS -->
+  <div id="settingsModal" class="hidden fixed inset-0 z-50 retro-modal-backdrop flex items-center justify-center p-4">
+    <div class="relative w-full max-w-lg bg-[#0c1420] border-4 border-[#243b55] p-6 shadow-2xl">
+      <div class="flex justify-between items-center border-b-2 border-[#243b55] pb-3 mb-4">
+        <div class="flex items-center space-x-2">
+          <span class="text-[#FFD166] text-xl">⚙</span>
+          <h3 class="font-pixel-title text-base text-[#F4F0E8]">AUDIO &amp; DISPLAY</h3>
+        </div>
+        <button onclick="closeModal('settingsModal')" class="text-[#F4F0E8] hover:text-[#FF3434] font-pixel-title text-sm cursor-pointer">[X]</button>
+      </div>
+
+      <div class="space-y-4 font-pixel-sub text-xs">
+        <div class="flex items-center justify-between py-2 border-b border-[#1c2c42]">
+          <span class="text-[#F4F0E8]">MASTER VOLUME</span>
+          <input type="range" min="0" max="100" value="80" class="accent-[#48D9E8] w-36">
+        </div>
+        <div class="flex items-center justify-between py-2 border-b border-[#1c2c42]">
+          <span class="text-[#F4F0E8]">RETRO CRT SCANLINES</span>
+          <span class="text-[#48D9E8] cursor-pointer" onclick="toggleScanlines(this)">[ ENABLED ]</span>
+        </div>
+        <div class="flex items-center justify-between py-2 border-b border-[#1c2c42]">
+          <span class="text-[#F4F0E8]">PIXEL GLITCH SHAKE</span>
+          <span class="text-[#48D9E8] cursor-pointer" onclick="toggleShake(this)">[ LOW ]</span>
+        </div>
+        <div class="flex items-center justify-between py-2">
+          <span class="text-[#F4F0E8]">DIFFICULTY</span>
+          <span class="text-[#FF3434] font-bold">[ NIGHTMARE ]</span>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-[#243b55] flex justify-end">
+        <button onclick="closeModal('settingsModal')" class="bg-[#101B2B] hover:bg-[#243b55] border border-[#48D9E8] text-[#48D9E8] font-pixel-title text-xs px-5 py-2 cursor-pointer">
+          SAVE &amp; RETURN
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST / NOTIFICATION DISPLAY -->
+  <div id="gameToast" class="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-[#050609] border-2 border-[#48D9E8] px-6 py-3 font-pixel-title text-xs text-[#48D9E8] shadow-[0_0_30px_rgba(72,217,232,0.8)] hidden">
+    <div id="toastMessage"><span class="text-[#FFD166]">Starting Game...</span><br><span class="text-[10px] text-white opacity-80">Loading Maze Zone 1 — The Damp Catacombs...</span></div>
+  </div>
+
+  <!-- Audio synthesiser (Retro 8-bit sound effects using Web Audio API) -->
+  <script>
+    // Web Audio synthesizer for retro bleeps & horror drones
+    let audioCtx = null;
+    let audioEnabled = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playBleep(freq = 440, type = 'square', duration = 0.1) {
+      if (!audioEnabled) return;
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    // Modal helpers
+    function openModal(id) {
+      playBleep(320, 'triangle', 0.15);
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      playBleep(240, 'square', 0.1);
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    // Toggle Audio
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const soundText = document.getElementById('soundText');
+      const soundIcon = document.getElementById('soundIcon');
+      if (audioEnabled) {
+        soundText.textContent = 'BGM: ON';
+        soundIcon.textContent = '🔊';
+        playBleep(520, 'square', 0.15);
+      } else {
+        soundText.textContent = 'BGM: OFF';
+        soundIcon.textContent = '🔇';
+      }
+    }
+
+    // Fullscreen toggle
+    function toggleFullscreen() {
+      playBleep(440, 'triangle', 0.15);
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.log(err));
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Generic Action Trigger Toast
+    function triggerAction(title, desc) {
+      playBleep(640, 'square', 0.25);
+      const toast = document.getElementById('gameToast');
+      const toastMsg = document.getElementById('toastMessage');
+      toastMsg.innerHTML = `<span class="text-[#FFD166]">${title}</span><br><span class="text-[10px] text-white opacity-80">${desc}</span>`;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3200);
+    }
+
+    function toggleScanlines(el) {
+      const scan = document.querySelector('.scanlines');
+      if (scan.style.display === 'none') {
+        scan.style.display = 'block';
+        el.textContent = '[ ENABLED ]';
+        el.className = 'text-[#48D9E8] cursor-pointer';
+      } else {
+        scan.style.display = 'none';
+        el.textContent = '[ DISABLED ]';
+        el.className = 'text-[#F4F0E8]/50 cursor-pointer';
+      }
+    }
+
+    function toggleShake(el) {
+      if (el.textContent.includes('LOW')) {
+        el.textContent = '[ HIGH ]';
+        el.className = 'text-[#FF3434] cursor-pointer';
+      } else if (el.textContent.includes('HIGH')) {
+        el.textContent = '[ OFF ]';
+        el.className = 'text-[#F4F0E8]/50 cursor-pointer';
+      } else {
+        el.textContent = '[ LOW ]';
+        el.className = 'text-[#48D9E8] cursor-pointer';
+      }
+    }
+
+    // Attach retro sound on hover to all buttons
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+          playBleep(280, 'sine', 0.04);
+        });
+      });
+    });
+  </script>
+
+
+
+</body></html>

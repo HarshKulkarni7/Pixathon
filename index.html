@@ -44,6 +44,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#050609;color:#F4F0E
 #hud{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:linear-gradient(rgba(5,6,9,.9),transparent);z-index:20;pointer-events:none}
 .hpill{background:rgba(10,17,30,.9);border:2px solid #2252a0;padding:4px 10px;font-size:10px;color:#F4F0E8;display:flex;align-items:center;gap:6px;border-radius:3px}
 #hud-mute{pointer-events:all;cursor:pointer;background:rgba(10,17,30,.9);border:1px solid #243b55;padding:4px 8px;font-size:11px;border-radius:2px}
+#h-lives{display:flex;gap:4px;align-items:center}
+#h-lives svg{width:20px;height:18px;image-rendering:pixelated;filter:drop-shadow(0 0 4px rgba(255,52,52,.7))}
+#h-lives svg.lost{filter:none;opacity:.55}
+#hitflash{position:absolute;inset:0;background:rgba(255,20,20,.55);pointer-events:none;z-index:45;opacity:0;transition:opacity .5s}
+#hitflash.on{opacity:1;transition:none}
+#toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);z-index:46;background:rgba(10,17,30,.92);border:2px solid #48D9E8;padding:8px 14px;font-size:10px;color:#F4F0E8;pointer-events:none;display:none;text-align:center;font-family:'Press Start 2P',monospace;line-height:1.6}
+.menu-cat{position:absolute;right:9%;top:50%;transform:translateY(-50%);width:min(34vw,380px);image-rendering:pixelated;filter:drop-shadow(0 0 22px rgba(72,217,232,.55));animation:bob 2.4s ease-in-out infinite;pointer-events:none}
+@keyframes bob{0%,100%{transform:translateY(-50%)}50%{transform:translateY(-54%)}}
 /* Minimap */
 #minimap-wrap{position:absolute;top:52px;right:10px;z-index:20;display:none}
 #minimap-label{font-size:8px;color:#48D9E8;text-align:center;margin-bottom:2px}
@@ -58,7 +66,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#050609;color:#F4F0E
 .mstats{padding:12px;margin-bottom:16px;text-align:left}
 .mbtn{width:100%;padding:10px;margin-top:8px;font-family:'Press Start 2P',monospace;font-size:9px;cursor:pointer;border:none;transition:opacity .15s}
 .mbtn:hover{opacity:.85}
-#ov-go{background:rgba(0,0,0,.88)}.#ov-go .modal{background:#170505;border:4px solid #FF3434;box-shadow:0 0 50px rgba(255,52,52,.7)}
+#ov-go{background:rgba(0,0,0,.88)}#ov-go .modal{background:#170505;border:4px solid #FF3434;box-shadow:0 0 50px rgba(255,52,52,.7)}
 #ov-win .modal{background:#07170f;border:4px solid #48D9E8;box-shadow:0 0 40px rgba(72,217,232,.5)}
 #ov-pause .modal{background:#0b1320;border:4px solid #2252a0}
 /* Transformation overlay */
@@ -88,17 +96,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#050609;color:#F4F0E
   <div class="scanlines"></div>
   <!-- Ambient bg glow -->
   <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 40%,#1a2d50 0%,#050609 65%);pointer-events:none"></div>
-  <div style="position:absolute;right:8%;top:50%;transform:translateY(-50%);opacity:.12;pointer-events:none">
-    <svg width="380" height="380" viewBox="0 0 100 100" fill="#FF3434">
-      <ellipse cx="55" cy="58" rx="30" ry="22"/>
-      <ellipse cx="80" cy="46" rx="12" ry="13"/>
-      <ellipse cx="82" cy="37" rx="3" ry="5" transform="rotate(-20 82 37)"/>
-      <ellipse cx="91" cy="36" rx="3" ry="5" transform="rotate(20 91 36)"/>
-      <circle cx="83" cy="41" r="2" fill="#FF0000"/>
-      <circle cx="89" cy="41" r="2" fill="#FF0000"/>
-      <path d="M25 65 Q5 88 2 98" stroke="#FF3434" stroke-width="3" fill="none"/>
-    </svg>
-  </div>
+  <img class="menu-cat" id="menu-cat" alt="Pixel cat">
   <div style="position:relative;z-index:10;max-width:680px;width:100%">
     <div style="display:inline-flex;align-items:center;gap:8px;padding:4px 12px;background:rgba(255,52,52,.15);border-left:4px solid #FF3434;margin-bottom:16px">
       <span style="font-size:10px;color:#FF3434;letter-spacing:.2em">SURVIVAL HORROR • RETRO MAZE RUNNER</span>
@@ -132,27 +130,26 @@ html,body{width:100%;height:100%;overflow:hidden;background:#050609;color:#F4F0E
       <div style="width:80px"></div>
     </div>
     <div class="level-grid">
-      <!-- Level 1 -->
       <div class="lcard unlocked" onclick="startGame(1)">
         <div class="lcard-zone">ZONE 01</div>
         <div class="lcard-name">THE AWAKENING</div>
-        <div style="font-size:9px;color:rgba(244,240,232,.5);margin-bottom:4px">Sewer Maze • 2D → 3D</div>
+        <div style="font-size:9px;color:rgba(244,240,232,.5);margin-bottom:4px">Sewer Maze • 3 Rats • 2D → 3D</div>
         <div class="lcard-status">★ UNLOCKED</div>
         <button class="lcard-btn" onclick="event.stopPropagation();startGame(1)">▶ PLAY</button>
       </div>
-      <!-- Level 2 locked -->
-      <div class="lcard locked">
+      <div class="lcard unlocked" onclick="startGame(2)">
         <div class="lcard-zone">ZONE 02</div>
         <div class="lcard-name">BONE CRYPT</div>
-        <div style="font-size:9px;color:rgba(244,240,232,.3);margin-bottom:4px">Unlocks after Zone 01</div>
-        <div class="lcard-status">🔒 LOCKED</div>
+        <div style="font-size:9px;color:rgba(244,240,232,.5);margin-bottom:4px">Faster Rats • 4 Rats • 2D → 3D</div>
+        <div class="lcard-status">★ UNLOCKED</div>
+        <button class="lcard-btn" onclick="event.stopPropagation();startGame(2)">▶ PLAY</button>
       </div>
-      <!-- Level 3 locked -->
-      <div class="lcard locked">
+      <div class="lcard unlocked" onclick="startGame(3)">
         <div class="lcard-zone">FINAL ZONE</div>
         <div class="lcard-name">THE RAT KING</div>
-        <div style="font-size:9px;color:rgba(244,240,232,.3);margin-bottom:4px">Boss Level</div>
-        <div class="lcard-status">💀 LOCKED</div>
+        <div style="font-size:9px;color:rgba(244,240,232,.5);margin-bottom:4px">Boss Level • 5 Rats • 2D → 3D</div>
+        <div class="lcard-status">★ UNLOCKED</div>
+        <button class="lcard-btn" onclick="event.stopPropagation();startGame(3)">▶ PLAY</button>
       </div>
     </div>
   </div>
@@ -166,10 +163,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#050609;color:#F4F0E
   <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,.25) 50%);background-size:100% 3px;pointer-events:none;opacity:.35;z-index:19"></div>
   <div style="position:absolute;inset:0;background:radial-gradient(circle at center,transparent 60%,rgba(5,6,9,.6) 100%);pointer-events:none;z-index:19"></div>
   <div id="danger"></div>
+  <div id="hitflash"></div>
+  <div id="toast"></div>
   <!-- HUD -->
   <div id="hud">
     <div class="hpill"><span style="width:8px;height:8px;border-radius:50%;background:#FFD166;box-shadow:0 0 8px #FFD166"></span>DOTS: <span id="h-dots">0</span>/<span id="h-total">0</span></div>
-    <div class="hpill" style="font-family:'Press Start 2P',monospace;font-size:9px;color:#FF3434;border-color:#FF3434">ZONE 01</div>
+    <div class="hpill" style="font-family:'Press Start 2P',monospace;font-size:9px;color:#FF3434;border-color:#FF3434" id="h-zone">ZONE 01</div>
+    <div class="hpill" id="h-lives"></div>
     <div class="hpill">SCORE: <span id="h-score">0</span></div>
     <button id="hud-mute" onclick="toggleMute()">🔊</button>
   </div>
@@ -179,7 +179,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#050609;color:#F4F0E
     <canvas id="minimap" width="168" height="168"></canvas>
   </div>
   <!-- Transform threshold bar hint -->
-  <div id="hint">WASD / ARROWS — Move • ESC — Pause</div>
+  <div id="hint">WASD / ARROWS — Move • ESC / P — Pause</div>
   <!-- Transformation overlay -->
   <div id="ov-transform">
     <div class="glitch">⚠ REALITY SHIFTS ⚠</div>
@@ -199,7 +199,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#050609;color:#F4F0E
     <div class="modal" style="background:#170505;border:4px solid #FF3434;box-shadow:0 0 50px rgba(255,52,52,.7)">
       <div style="font-size:32px;margin-bottom:8px">🐀🩸</div>
       <h2 style="color:#FF3434">YOU WERE CAUGHT!</h2>
-      <p>The rat consumed your soul...</p>
+      <p>All 3 lives are gone. The rat consumed your soul...</p>
       <div class="mstats" style="background:#0c0303;border:1px solid #330505">
         <div class="mstat"><span style="color:rgba(244,240,232,.6)">DOTS:</span><span id="go-dots" style="color:#48D9E8">-</span></div>
         <div class="mstat"><span style="color:rgba(244,240,232,.6)">SCORE:</span><span id="go-score" style="color:#FFD166">-</span></div>
@@ -218,6 +218,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#050609;color:#F4F0E
         <div class="mstat"><span style="color:rgba(244,240,232,.6)">DOTS:</span><span id="win-dots" style="color:#FFD166">-</span></div>
         <div class="mstat"><span style="color:rgba(244,240,232,.6)">SCORE:</span><span id="win-score" style="color:#48D9E8">-</span></div>
       </div>
+      <button class="mbtn" id="btn-next" onclick="nextLevel()" style="background:#0f5c3a;border:2px solid #48D9E8;color:#F4F0E8">▶ NEXT LEVEL</button>
       <button class="mbtn" onclick="retryLevel()" style="background:#193d70;border:2px solid #48D9E8;color:#F4F0E8">🔄 PLAY AGAIN</button>
       <button class="mbtn" onclick="showLevelSelect()" style="background:#0c1420;border:1px solid #243b55;color:rgba(244,240,232,.7)">◀ LEVEL SELECT</button>
     </div>
@@ -264,7 +265,18 @@ const MAZE = [
 ];
 const ROWS=21,COLS=21;
 const CAT_START={row:17,col:10};
-const RAT_STARTS=[{row:1,col:1},{row:1,col:19},{row:10,col:10}];
+const RAT_STARTS=[{row:1,col:1},{row:1,col:19},{row:10,col:10},{row:19,col:19},{row:19,col:1}];
+const LEVELS=[
+  {zone:'ZONE 01',rats:3,step2d:0.60,spd3:1.9},
+  {zone:'ZONE 02',rats:4,step2d:0.50,spd3:2.2},
+  {zone:'FINAL ZONE',rats:5,step2d:0.42,spd3:2.45}
+];
+const MAX_LIVES=3, INVULN=3.0;
+const CAT_SRC='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAdCAYAAABSZrcyAAAFIElEQVR42r2X229UVRTGf2ufuTHT2mln2npDqBijEVKrIBDAGKNYJTHig9cHE+OTvBh9Iz5pDDEaHoy+mGiikfgH+ECMDxqIioA38MIl3gBR27lQ2k47PXP258NM6bSd0kKMKzk5OclZe+31rW99a2/4H62jY42av2OXukA6v05OHhBYwFjhkC3Fry23TpneAaJYQmPFr+2Sg2dzW/Xp7hH6rr+RmvM4D30PBRopHFh0A97i4FPIYpeXecQIJ078TdKSGBG9q1Yiv7hfV8/tCrpuxWwW6pcW3DuIJCJXJVCI4YjMaM+t14WF5epva+xKAanOfvY+k+WBd85dfnCpCiaOHjtLXI6IXwnwZLvXACnAAdNQNDZBiCzOtnfHgCTNydtSA3f3rJfL3YIKx5AMQyRdjY6bH0LK1Al4ETPAGQwNH2Fq6BtKhe9syZlPRKJTKSqZa0mlssiJSKI0PAwMLZqHMPI9KzGlmVJiBvZsfp0EOBzlwle2kLM3V3exZKPV6rAuzRxSfBberi2/SU/fG/DGDiP0wSLATb8jdj/+K68/8gtnf3rT1GoDMl578hivPXGy8Y/QHLY7DJ66P8H6GyDhYmRzdyqT36T2/CYttAkD1vSV2fHWOY5/sFnO1PK//hXneW53iaMfPiaZA6LZbJdgw/NVwAhUIXlFH+lUN+Xhw/OAn7bAGygi9CKkivcOh83JLEQGo05Y7QxOV86jZGy88PmFGnd0bVYqkUUWXFxsnNi6ay3JXk9ywyt89nGMYI7ahOaI1zyd+RfYuiuBUAOzBfrc4SgXj+GJ4QSnTpUVSXiD/oFt01KDCJB5ksSxRIIAwIz0R28TRI7z258hLiAW4FwCEdSRk/HXz2/a8T9KSjiblqO6lUv7zIBcdx+dPatZfduD9K3oslXXddmMeMwmVV18xK1r72Ty3kepbH2Ugdvvnqm8ZmgaIFbc8qzWrh2kb3mnuXkNIQFtQJophbNQqUunrxNHBnjuHnwJD3xz4Av6Nz7Mms3b+fbQPkxwz30vI2INknqKQ78xpRjeq7W8Gp5K5QzOO4ImhpwvfmnxzLWKJ65okk6YslHe3/MZJpHILEcEvLfnE0yOqo1hBE1AVZkYPct4sT6GWwpKJrdJgTMCE5ORY6K43wDSufXK9twILEMWNmCtI4BPEuGnMcIIMefwVm8vizIIGBk+RKX01UXmuWpkujci81T+OdzUbCGjQ6fBagQEIIgwsDF8QzJn6lTF1F7vZcBbFTPAaotMNeepnj9Jqv160umrcbk7NFE8aIFiZHpXU6uUSaQ7wUAy9n28C5tHSLFl8EWs0d253ps49/dxSkMHm3jUwsYLhyycPI0Dkm1X45xmpNWWOg/dnEnn5vktONXkE1TGT2MkkTVaympLn8FLsAWDj5UOW8ZiSi+7hmRqOcoHQjVa9vt/HRwgMpFou4a4GWHlDNBCdk0X4LU5o8DJ5k0y5heitQUKIBoFQoJYlgjNK7aAmgd5h296IjzedPmZm5tipPgj7b0DpLtWEf5zECfw5olNnxeDGL/8XkTR5CzfuKWImwNfL1MUTSKEmsbqovzJ5DYr1XYVqWUdFAvfk88PUK1O8eWnb+EQWERkcNfgTtS03P69r2JWg8YBZcvgTpwmGS8coVQ8sLRLg3OThGNnCcf+JEGc0dIPpLP9+MbppYZhPkRRGU+26aQbUteXaVGpMFo+ybnizAXjsjonm7tDUy52gVStVvLMPiOnfEipOPtq9S8OGiyopzb7vwAAAABJRU5ErkJggg==';
+const catImg=new Image();let catReady=false;
+catImg.onload=()=>{catReady=true;};
+catImg.src=CAT_SRC;
+document.addEventListener('DOMContentLoaded',()=>{const m=document.getElementById('menu-cat');if(m)m.src=CAT_SRC;});
 
 function walkable(r,c){
   if(r<0||r>=ROWS||c<0||c>=COLS)return false;
@@ -309,6 +321,7 @@ let transformDone=false;
 let rafId=null;
 let lastT=0;
 let muted=false;
+let level=1, lives=MAX_LIVES, invuln=0, cfg=LEVELS[0];
 
 // 2D cat movement
 let cs=32;         // cell size px
@@ -330,72 +343,111 @@ function showScreen(id){
 }
 function showMenu(){
   stopGame();
+  phase='menu';
   showScreen('s-menu');
-  tryPlayAudio('menu');
+  syncMusic();
 }
 function showLevelSelect(){
   stopGame();
+  hideAllOverlays();
+  phase='menu';
   showScreen('s-levels');
-  tryPlayAudio('menu');
+  syncMusic();
 }
 
 // ══════════════════════════════════════════════════════════
-//  AUDIO (stub — works if files exist, silent otherwise)
+//  AUDIO  (one <audio> element per sound, created once, never re-unlocked)
+//  menu / level-select / 2D   -> theme song (looping)
+//  reality shift              -> "view change cat scared"
+//  3D, rat nearby             -> footsteps (louder = closer)
+//  caught by rat              -> "if cat is eaten by mouse"
 // ══════════════════════════════════════════════════════════
-const AU={};
-['menu','footsteps','transform','death'].forEach(k=>{ AU[k]=null; });
 const ASRC={
   menu:'audio/theme song main menu.mp3',
   footsteps:'audio/footsteps.mp3',
-  transform:'audio/view change cat scared.mp3',
+  scared:'audio/view change cat scared.mp3',
   death:'audio/if cat is eaten by mouse.mp3'
 };
-function loadAudio(k){
-  if(AU[k])return;
-  const a=new Audio();
-  a.src=ASRC[k];
-  a.loop=(k==='menu'||k==='footsteps');
-  a.volume=0.7;
-  a.onerror=()=>{};
-  AU[k]=a;
+const ABASE={menu:.55,footsteps:.9,scared:.95,death:1};
+const AU={};
+let gestureDone=false;
+function getAudio(k){
+  if(!AU[k]){
+    const a=new Audio(ASRC[k]);
+    a.preload='auto';
+    a.loop=(k==='menu'||k==='footsteps');
+    a.volume=ABASE[k];
+    AU[k]=a;
+  }
+  return AU[k];
 }
-function tryPlayAudio(k){
+function preloadAudio(){Object.keys(ASRC).forEach(getAudio);}
+function playSound(k,restart){
   if(muted)return;
-  loadAudio(k);
-  const a=AU[k];if(!a)return;
-  if(!a.loop)a.currentTime=0;
-  a.play().catch(()=>{});
+  const a=getAudio(k);
+  if(restart){try{a.currentTime=0;}catch(e){}}
+  const p=a.play();
+  if(p&&p.catch)p.catch(()=>{});
 }
-function stopAudio(k){
+function stopSound(k){
   const a=AU[k];if(!a)return;
-  try{a.pause();a.currentTime=0;}catch(e){}
+  a.pause();
+  try{a.currentTime=0;}catch(e){}
 }
-function pauseAudio(k){const a=AU[k];if(a)try{a.pause();}catch(e){}}
-function stopAllAudio(){Object.keys(AU).forEach(stopAudio);}
+function pauseSound(k){const a=AU[k];if(a&&!a.paused)a.pause();}
+function stopAllAudio(){Object.keys(AU).forEach(stopSound);}
+
+// The theme belongs to: main menu, level select and the normal 2D game
+function themeWanted(){return !muted&&(phase==='menu'||phase==='2d');}
+function syncMusic(){
+  const a=getAudio('menu');
+  if(themeWanted()&&gestureDone){
+    if(a.paused){const p=a.play();if(p&&p.catch)p.catch(()=>{});}
+  } else if(!themeWanted()){
+    if(!a.paused)a.pause();
+  }
+}
+// Browsers block sound until the first click/key — start it on that first gesture
+function onFirstGesture(){
+  if(gestureDone)return;
+  gestureDone=true;
+  preloadAudio();
+  syncMusic();
+}
+['pointerdown','keydown','touchstart'].forEach(ev=>window.addEventListener(ev,onFirstGesture,{passive:true}));
+preloadAudio();
+
 function toggleMute(){
   muted=!muted;
   document.getElementById('hud-mute').textContent=muted?'🔇':'🔊';
-  if(muted)stopAllAudio();
-  else if(phase==='2d'||phase==='3d')tryPlayAudio('menu');
+  if(muted)Object.keys(AU).forEach(pauseSound);
+  else syncMusic();
 }
-function unlockAudio(){
-  Object.keys(AU).forEach(k=>{
-    loadAudio(k);
-    const a=AU[k];
-    if(a&&a.paused){a.play().catch(()=>{});setTimeout(()=>{if(a)a.pause();},1);}
-  });
+
+// Footsteps: only in the 3D view, volume follows how close the nearest rat is
+function updateFootsteps(minD){
+  const a=getAudio('footsteps');
+  const RANGE=6.5;
+  if(muted||phase!=='3d'||paused||minD>RANGE){
+    if(!a.paused)a.pause();
+    return;
+  }
+  const v=Math.max(.12,Math.min(1,(RANGE-minD)/RANGE))*ABASE.footsteps;
+  a.volume=v;
+  if(a.paused){const p=a.play();if(p&&p.catch)p.catch(()=>{});}
 }
 
 // ══════════════════════════════════════════════════════════
 //  INPUT
 // ══════════════════════════════════════════════════════════
 const keys={};
+const GAME_KEYS=['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'];
 window.addEventListener('keydown',e=>{
+  if(GAME_KEYS.includes(e.code)&&document.getElementById('s-game').classList.contains('active'))e.preventDefault();
   keys[e.code]=true;
-  unlockAudio();
-  if(e.code==='Escape'){
-    if(phase==='3d'&&document.pointerLockElement)document.exitPointerLock();
-    else if(phase==='2d'||phase==='3d'){paused?resumeGame():pauseGame();}
+  if(e.repeat)return;
+  if(e.code==='Escape'||e.code==='KeyP'){
+    if(phase==='2d'||phase==='3d'){paused?resumeGame():pauseGame();}
   }
   if(phase==='2d'&&!paused){
     if(e.code==='ArrowUp'   ||e.code==='KeyW'){qR=-1;qC=0;}
@@ -405,26 +457,45 @@ window.addEventListener('keydown',e=>{
   }
 });
 window.addEventListener('keyup',e=>{keys[e.code]=false;});
+window.addEventListener('blur',()=>{for(const k in keys)keys[k]=false;});
 let mdx=0;
 document.addEventListener('mousemove',e=>{if(document.pointerLockElement)mdx+=e.movementX*0.0025;});
-document.addEventListener('click',()=>{
-  unlockAudio();
-  if(phase==='3d'&&!document.pointerLockElement)tryPointerLock();
+// Mouse-look is optional: click the 3D view to capture the mouse. Keyboard always works.
+document.addEventListener('click',e=>{
+  if(phase==='3d'&&!paused&&!document.pointerLockElement&&ren3&&e.target===ren3.domElement)tryPointerLock();
 });
-document.addEventListener('pointerlockchange',()=>{
-  if(document.pointerLockElement){
-    hide('plmsg');
-  } else if(phase==='3d'){
-    show('plmsg');
-  }
-});
-function tryPointerLock(){if(ren3)ren3.domElement.requestPointerLock();}
+function tryPointerLock(){
+  try{const p=ren3&&ren3.domElement.requestPointerLock();if(p&&p.catch)p.catch(()=>{});}catch(e){}
+}
 
 // ══════════════════════════════════════════════════════════
 //  HELPERS
 // ══════════════════════════════════════════════════════════
 function show(id){const el=document.getElementById(id);if(el){el.classList.add('show');el.style.display='flex';}}
 function hide(id){const el=document.getElementById(id);if(el){el.classList.remove('show');el.style.display='none';}}
+const HEART_MAP=['0110110','1111111','1111111','0111110','0011100','0001000'];
+function heartSVG(full){
+  let r='';
+  HEART_MAP.forEach((row,y)=>{for(let x=0;x<7;x++)if(row[x]==='1')r+=`<rect x="${x}" y="${y}" width="1" height="1"/>`;});
+  return `<svg viewBox="0 0 7 6" shape-rendering="crispEdges" fill="${full?'#FF3434':'#3a1a22'}" class="${full?'':'lost'}">${r}</svg>`;
+}
+function renderHearts(){
+  let h='';
+  for(let i=0;i<MAX_LIVES;i++)h+=heartSVG(i<lives);
+  document.getElementById('h-lives').innerHTML=h;
+}
+let toastTO=null;
+function toast(msg,ms){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  clearTimeout(toastTO);
+  toastTO=setTimeout(()=>{t.style.display='none';},ms||3500);
+}
+function flashHit(){
+  const f=document.getElementById('hitflash');
+  f.classList.add('on');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>f.classList.remove('on')));
+}
 function updateHUD(){
   if(!gs)return;
   document.getElementById('h-dots').textContent=gs.collected;
@@ -444,47 +515,59 @@ function buildState(){
     dots,totalDots:total,collected:0,
     threshold:Math.ceil(total/2),
     cat:{row:CAT_START.row,col:CAT_START.col,fx:CAT_START.col,fy:CAT_START.row,angle:0},
-    rats:RAT_STARTS.map((s,i)=>({id:i,row:s.row,col:s.col,fx:s.col,fy:s.row,timer:0,mesh:null}))
+    rats:RAT_STARTS.slice(0,cfg.rats).map((s,i)=>({id:i,row:s.row,col:s.col,fx:s.col,fy:s.row,timer:0,mesh:null}))
   };
 }
 
 // ══════════════════════════════════════════════════════════
 //  START GAME
 // ══════════════════════════════════════════════════════════
-function startGame(level){
-  unlockAudio();
+function startGame(lv){
   stopGame();
   hideAllOverlays();
+  level=Math.max(1,Math.min(3,lv||1));
+  cfg=LEVELS[level-1];
   gs=buildState();
   score=0;transformDone=false;paused=false;
+  lives=MAX_LIVES;invuln=1.5;
   phase='2d';
   dirR=0;dirC=0;qR=0;qC=0;catMoving=false;
+  document.getElementById('h-zone').textContent=cfg.zone;
+  renderHearts();
 
-  // Size 2D canvas
-  const W=window.innerWidth,H=window.innerHeight;
-  cs=Math.max(20,Math.min(Math.floor((H-60)/ROWS),Math.floor(W/COLS),38));
-  const cv=document.getElementById('canvas2d');
-  cv.width=COLS*cs; cv.height=ROWS*cs;
-  cv.style.display='block';
+  // Show the game screen FIRST so the canvas has a real layout, then size it
+  showScreen('s-game');
   document.getElementById('div3d').style.display='none';
   document.getElementById('minimap-wrap').style.display='none';
-
+  document.getElementById('hint').textContent='WASD / ARROWS — Move • ESC / P — Pause';
+  sizeCanvas2D();
   catX=CAT_START.col*cs; catY=CAT_START.row*cs;
   catTC=CAT_START.col; catTR=CAT_START.row;
-
   updateHUD();
-  showScreen('s-game');
-  stopAllAudio();
+
+  stopSound('footsteps');stopSound('scared');stopSound('death');
+  syncMusic();            // theme keeps playing through the normal 2D game
 
   lastT=performance.now();
   rafId=requestAnimationFrame(loop);
 }
+function sizeCanvas2D(){
+  const W=window.innerWidth,H=window.innerHeight;
+  cs=Math.max(16,Math.min(Math.floor((H-60)/ROWS),Math.floor(W/COLS),38));
+  const cv=document.getElementById('canvas2d');
+  cv.width=COLS*cs; cv.height=ROWS*cs;
+  cv.style.display='block';
+  if(gs&&phase==='2d'&&!catMoving){catX=gs.cat.col*cs;catY=gs.cat.row*cs;}
+}
+window.addEventListener('resize',()=>{if(phase==='2d')sizeCanvas2D();});
 
 function stopGame(){
   if(rafId){cancelAnimationFrame(rafId);rafId=null;}
   if(ren3){ren3.dispose();ren3=null;}
   scene3=null;cam3=null;
   if(document.pointerLockElement)document.exitPointerLock();
+  window.removeEventListener('resize',on3DResize);
+  pauseSound('footsteps');pauseSound('scared');pauseSound('death');
 }
 
 // ══════════════════════════════════════════════════════════
@@ -494,6 +577,7 @@ function loop(t){
   rafId=requestAnimationFrame(loop);
   const dt=Math.min((t-lastT)/1000,0.05);lastT=t;
   if(paused||phase==='gameover'||phase==='victory'||phase==='transforming')return;
+  if(invuln>0)invuln=Math.max(0,invuln-dt);
   if(phase==='2d'){update2D(dt);draw2D();}
   if(phase==='3d'){update3D(dt);if(ren3&&scene3&&cam3)ren3.render(scene3,cam3);drawMinimap();}
 }
@@ -528,7 +612,7 @@ function update2D(dt){
   // move rats
   for(const rat of gs.rats){
     rat.timer=(rat.timer||0)+dt;
-    if(rat.timer>0.55){
+    if(rat.timer>cfg.step2d){
       rat.timer=0;
       const path=bfs(rat.row,rat.col,gs.cat.row,gs.cat.col);
       if(path.length>0){rat.row=path[0].r;rat.col=path[0].c;}
@@ -536,6 +620,7 @@ function update2D(dt){
     rat.fx+=(rat.col-rat.fx)*Math.min(1,dt*8);
     rat.fy+=(rat.row-rat.fy)*Math.min(1,dt*8);
   }
+  checkRatHit2D();
 }
 
 function tryMove(nr,nc,dr,dc){
@@ -559,9 +644,67 @@ function collectDot2D(){
 }
 
 function checkRatHit2D(){
-  if(!gs||phase!=='2d')return;
+  if(!gs||phase!=='2d'||invuln>0)return;
   for(const rat of gs.rats){
-    if(rat.row===gs.cat.row&&rat.col===gs.cat.col){doGameOver();return;}
+    const dx=rat.fx-gs.cat.fx,dy=rat.fy-gs.cat.fy;
+    if(dx*dx+dy*dy<0.42){loseLife();return;}
+  }
+}
+
+// A rat caught the cat: lose a heart, respawn safely, or game over at 0
+function loseLife(){
+  if(invuln>0||phase==='gameover'||phase==='victory')return;
+  lives--;
+  renderHearts();
+  flashHit();
+  if(lives<=0){doGameOver();return;}
+  playSound('death',true);
+  invuln=INVULN;
+  toast('OUCH!  '+lives+(lives===1?' LIFE':' LIVES')+' LEFT',2200);
+  // respawn cat at the start cell, rats back to their far-away spawn points
+  gs.cat.row=CAT_START.row;gs.cat.col=CAT_START.col;
+  gs.cat.fx=CAT_START.col;gs.cat.fy=CAT_START.row;
+  catTR=CAT_START.row;catTC=CAT_START.col;
+  catX=CAT_START.col*cs;catY=CAT_START.row*cs;
+  catMoving=false;dirR=0;dirC=0;qR=0;qC=0;
+  placeRatsFarFrom(CAT_START.row,CAT_START.col);
+  if(phase==='3d'&&cam3){
+    cam3.position.set(CAT_START.col+.5,.5,CAT_START.row+.5);
+    faceOpenDirection();
+    for(const rat of gs.rats){
+      rat.tr=undefined;rat.tc=undefined;
+      if(rat.mesh)rat.mesh.position.set(rat.fx+.5,0,rat.fy+.5);
+    }
+  }
+}
+function placeRatsFarFrom(cr,cc){
+  const cands=[[1,1],[1,19],[19,1],[19,19],[10,10],[10,0],[10,20],[1,10],[19,10],[5,4],[5,16],[15,4],[15,16]]
+    .filter(([r,c])=>MAZE[r][c]!==1);
+  const used=new Set();
+  for(const rat of gs.rats){
+    let best=null,bd=-1;
+    for(const [r,c] of cands){
+      if(used.has(r+','+c))continue;
+      const d=Math.abs(r-cr)+Math.abs(c-cc);
+      if(d>bd){bd=d;best=[r,c];}
+    }
+    used.add(best[0]+','+best[1]);
+    rat.row=best[0];rat.col=best[1];rat.fx=best[1];rat.fy=best[0];
+    rat.timer=0;rat.tr=undefined;rat.tc=undefined;
+  }
+}
+function faceOpenDirection(){
+  // turn the 3D camera towards a corridor that is actually open
+  const r=Math.round(cam3.position.z-.5),c=Math.round(cam3.position.x-.5);
+  const opts=[];
+  if(dirR||dirC)opts.push([dirR,dirC]);
+  opts.push([-1,0],[0,-1],[0,1],[1,0]);
+  for(const [dr,dc] of opts){
+    if(walkable(r+dr,c+dc)){
+      cam3.rotation.y=Math.atan2(-dc,-dr);
+      gs.cat.angle=cam3.rotation.y;
+      return;
+    }
   }
 }
 
@@ -639,8 +782,21 @@ function draw2D(){
     ctx.stroke();
   }
 
-  // Cat (Bright Cyan/Navy Kitty with pointed ears, pink nose, cute whiskers)
+  // Cat — the user's pixel-art cat, with a cyan rim-glow so it pops on the dark maze
   const cx=catX+c/2, cy=catY+c/2, cr=c*0.46;
+  ctx.save();
+  const blink=invuln>0&&Math.floor(performance.now()/110)%2===0;
+  if(catReady){
+    if(!blink){
+      const sh=c*1.28, sw=sh*catImg.width/catImg.height;
+      ctx.imageSmoothingEnabled=false;
+      ctx.shadowColor='#48D9E8';ctx.shadowBlur=Math.max(6,c*.28);
+      ctx.drawImage(catImg,Math.round(cx-sw/2),Math.round(cy-sh/2-c*.04),Math.round(sw),Math.round(sh));
+    }
+    ctx.restore();
+  } else {
+    ctx.restore();
+    ctx.save();ctx.globalAlpha=blink?0.35:1;
   // Tail
   ctx.strokeStyle='#48D9E8'; ctx.lineWidth=3; ctx.beginPath();
   ctx.moveTo(cx-cr*0.6, cy+cr*0.2);
@@ -684,6 +840,10 @@ function draw2D(){
   ctx.moveTo(cx+cr*0.2, cy+cr*0.15); ctx.lineTo(cx+cr*0.75, cy+cr*0.22);
   ctx.stroke();
 
+  }
+  if(!catReady)ctx.restore();
+  ctx.globalAlpha=1;ctx.shadowBlur=0;
+
   // Transformation progress bar
   if(!transformDone){
     const pct=gs.collected/gs.threshold;
@@ -701,8 +861,9 @@ function draw2D(){
 // ══════════════════════════════════════════════════════════
 function doTransform(){
   phase='transforming';
-  stopAudio('menu');
-  tryPlayAudio('transform');
+  syncMusic();                 // theme stops (phase is no longer 2d)
+  stopSound('menu');
+  playSound('scared',true);    // "Scared Cat" sting on the reality shift
   const ov=document.getElementById('ov-transform');
   ov.style.display='flex';
   let f=0;
@@ -711,14 +872,20 @@ function doTransform(){
     if(f>8){clearInterval(iv);ov.style.background='#050609';}
   },180);
   setTimeout(()=>{
+    if(phase!=='transforming')return;   // player left during the effect
     ov.style.display='none';
+    // keep the rats away from the cat when the 3D world appears
+    placeRatsFarFrom(gs.cat.row,gs.cat.col);
     build3D();
+    faceOpenDirection();
+    invuln=INVULN+1;
     phase='3d';
+    lastT=performance.now();
     document.getElementById('canvas2d').style.display='none';
     document.getElementById('div3d').style.display='block';
     document.getElementById('minimap-wrap').style.display='block';
-    document.getElementById('hint').textContent='WASD Move • Q/E Turn • Click to capture mouse • ESC Pause';
-    document.getElementById('plmsg').style.display='flex';
+    document.getElementById('hint').textContent='↑↓ / W S Move • ←→ / Q E Turn • A D Strafe • Click = mouse look • ESC Pause';
+    toast('FIRST PERSON!  ↑ ↓ MOVE   ← → TURN',4200);
   },2200);
 }
 
@@ -833,6 +1000,7 @@ function build3D(){
     rat.fx=rat.col; rat.fy=rat.row;
   }
 
+  window.removeEventListener('resize',on3DResize);
   window.addEventListener('resize',on3DResize);
 }
 function on3DResize(){
@@ -845,68 +1013,70 @@ function on3DResize(){
 // ══════════════════════════════════════════════════════════
 //  3D UPDATE
 // ══════════════════════════════════════════════════════════
-const SPD3=2.8,COL_R=.32;
+const SPD3=3.0,COL_R=.28,TURN=2.3;
 function update3D(dt){
   if(!gs||!cam3)return;
-  // Mouse look
-  if(mdx){cam3.rotation.y-=mdx;gs.cat.angle=cam3.rotation.y;mdx=0;}
-  // Keyboard turn fallback
-  if(!document.pointerLockElement){
-    if(keys['KeyQ']||keys['ArrowLeft']){cam3.rotation.y+=dt*2;gs.cat.angle=cam3.rotation.y;}
-    if(keys['KeyE']||keys['ArrowRight']){cam3.rotation.y-=dt*2;gs.cat.angle=cam3.rotation.y;}
-  }
-  // Move
+  // mouse look (optional)
+  if(mdx){cam3.rotation.y-=mdx;mdx=0;}
+  // keyboard turning — ALWAYS available (arrows left/right + Q/E)
+  let turn=0;
+  if(keys['ArrowLeft']||keys['KeyQ'])turn+=1;
+  if(keys['ArrowRight']||keys['KeyE'])turn-=1;
+  if(turn)cam3.rotation.y+=turn*TURN*dt;
+  gs.cat.angle=cam3.rotation.y;
+
+  // movement: up/down = forward/back, A/D = strafe
   const ang=cam3.rotation.y;
-  let mx=0,mz=0;
-  if(keys['KeyW']||keys['ArrowUp']){mx-=Math.sin(ang);mz-=Math.cos(ang);}
-  if(keys['KeyS']||keys['ArrowDown']){mx+=Math.sin(ang);mz+=Math.cos(ang);}
-  if(keys['KeyA']){mx-=Math.cos(ang);mz+=Math.sin(ang);}
-  if(keys['KeyD']){mx+=Math.cos(ang);mz-=Math.sin(ang);}
+  const fwd=(keys['ArrowUp']||keys['KeyW']?1:0)-(keys['ArrowDown']||keys['KeyS']?1:0);
+  const str=(keys['KeyD']?1:0)-(keys['KeyA']?1:0);
+  let mx=-Math.sin(ang)*fwd+Math.cos(ang)*str;
+  let mz=-Math.cos(ang)*fwd-Math.sin(ang)*str;
   if(mx||mz){
-    const len=Math.sqrt(mx*mx+mz*mz);
+    const len=Math.hypot(mx,mz);
     mx=mx/len*SPD3*dt;mz=mz/len*SPD3*dt;
-    const nx=cam3.position.x+mx,nz=cam3.position.z;
-    if(canMove(nx,nz))cam3.position.x=nx;
-    const nx2=cam3.position.x,nz2=cam3.position.z+mz;
-    if(canMove(nx2,nz2))cam3.position.z=nz2;
+    const nx=cam3.position.x+mx;
+    if(canMove(nx,cam3.position.z))cam3.position.x=nx;
+    const nz=cam3.position.z+mz;
+    if(canMove(cam3.position.x,nz))cam3.position.z=nz;
     gs.cat.fx=cam3.position.x-.5;gs.cat.fy=cam3.position.z-.5;
-    collectDot3D();checkRatHit3D();
-    if(!muted)tryPlayAudio('footsteps');
-  } else {
-    pauseAudio('footsteps');
+    collectDot3D();
   }
   cam3.position.y=.5;
+  if(phase!=='3d')return;
 
-  // Move rats in 3D
+  // rats hunt the cat
   for(const rat of gs.rats){
     rat.timer=(rat.timer||0)+dt;
     if(rat.timer>.45){
       rat.timer=0;
-      const cr=Math.round(cam3.position.z-.5),cc=Math.round(cam3.position.x-.5);
+      const cr=Math.floor(cam3.position.z),cc=Math.floor(cam3.position.x);
       const path=bfs(Math.round(rat.fy),Math.round(rat.fx),cr,cc);
       if(path.length>0){rat.tr=path[0].r;rat.tc=path[0].c;}
     }
     if(rat.tr!==undefined){
       const tx=rat.tc+.5,tz=rat.tr+.5;
       const ddx=tx-(rat.fx+.5),ddz=tz-(rat.fy+.5);
-      const dd=Math.sqrt(ddx*ddx+ddz*ddz);
+      const dd=Math.hypot(ddx,ddz);
       if(dd>.05){
-        rat.fx+=ddx/dd*2.2*dt;rat.fy+=ddz/dd*2.2*dt;
-        if(rat.mesh){
-          rat.mesh.position.set(rat.fx+.5,0,rat.fy+.5);
-          rat.mesh.lookAt(cam3.position.x,0,cam3.position.z);
-        }
+        const step=Math.min(dd,cfg.spd3*dt);
+        rat.fx+=ddx/dd*step;rat.fy+=ddz/dd*step;
       }
     }
+    if(rat.mesh){
+      rat.mesh.position.set(rat.fx+.5,0,rat.fy+.5);
+      rat.mesh.lookAt(cam3.position.x,0,cam3.position.z);
+    }
   }
+  checkRatHit3D();
 
-  // Danger proximity
+  // danger + footsteps: the closer a rat, the louder the footsteps
   let minD=999;
   for(const rat of gs.rats){
     const ddx=(rat.fx+.5)-cam3.position.x,ddz=(rat.fy+.5)-cam3.position.z;
-    minD=Math.min(minD,Math.sqrt(ddx*ddx+ddz*ddz));
+    minD=Math.min(minD,Math.hypot(ddx,ddz));
   }
   document.getElementById('danger').className=minD<3?'on':'';
+  updateFootsteps(minD);
 }
 
 function canMove(wx,wz){
@@ -932,10 +1102,10 @@ function collectDot3D(){
 }
 
 function checkRatHit3D(){
-  if(phase!=='3d')return;
+  if(phase!=='3d'||invuln>0)return;
   for(const rat of gs.rats){
     const ddx=(rat.fx+.5)-cam3.position.x,ddz=(rat.fy+.5)-cam3.position.z;
-    if(Math.sqrt(ddx*ddx+ddz*ddz)<.7){doGameOver();return;}
+    if(Math.sqrt(ddx*ddx+ddz*ddz)<.7&&invuln<=0){loseLife();return;}
   }
 }
 
@@ -986,8 +1156,10 @@ function drawMinimap(){
 function doGameOver(){
   if(phase==='gameover')return;
   phase='gameover';
-  stopAudio('footsteps');stopAudio('menu');
-  tryPlayAudio('death');
+  pauseSound('footsteps');stopSound('menu');stopSound('scared');
+  if(document.pointerLockElement)document.exitPointerLock();
+  playSound('death',true);     // the cat is eaten by the rat
+  document.getElementById('danger').className='';
   document.getElementById('go-dots').textContent=gs.collected+'/'+gs.totalDots;
   document.getElementById('go-score').textContent=score;
   show('ov-go');
@@ -995,21 +1167,27 @@ function doGameOver(){
 function doVictory(){
   if(phase==='victory')return;
   phase='victory';
-  stopAudio('footsteps');
+  pauseSound('footsteps');
+  if(document.pointerLockElement)document.exitPointerLock();
+  document.getElementById('danger').className='';
   document.getElementById('win-dots').textContent=gs.collected+'/'+gs.totalDots;
   document.getElementById('win-score').textContent=score;
+  document.getElementById('btn-next').style.display=level<3?'block':'none';
   show('ov-win');
 }
 function pauseGame(){
-  paused=true;pauseAudio('footsteps');
+  paused=true;pauseSound('footsteps');pauseSound('menu');
+  if(document.pointerLockElement)document.exitPointerLock();
   document.getElementById('ov-pause').style.display='flex';
 }
 function resumeGame(){
   paused=false;
   document.getElementById('ov-pause').style.display='none';
-  if(phase==='3d')document.getElementById('plmsg').style.display='flex';
+  lastT=performance.now();
+  syncMusic();
 }
-function retryLevel(){hideAllOverlays();startGame(1);}
+function nextLevel(){hideAllOverlays();startGame(Math.min(3,level+1));}
+function retryLevel(){hideAllOverlays();startGame(level);}
 function hideAllOverlays(){
   ['ov-go','ov-win','ov-pause','ov-transform'].forEach(id=>{
     const el=document.getElementById(id);

@@ -10,9 +10,13 @@ A retro pixel-art arcade horror browser game.
 ## Controls
 - **2D Mode:** `W, A, S, D` or `Arrow Keys` to move.
 - **3D Mode:**
-  - `W, A, S, D` or `Arrow Keys`: Move through corridors.
-  - `Q / E` or `Mouse Movement` (click game canvas for Pointer Lock): Look around / rotate camera.
-  - `ESC`: Pause game / release cursor.
+  - `Up / Down` (or `W / S`): Walk forward / backward.
+  - `Left / Right` (or `Q / E`): Turn. `A / D`: Strafe.
+  - Click the game view for optional mouse-look.
+  - `ESC` or `P`: Pause.
+- **Lives:** 3 hearts. A rat hit costs a heart (brief invulnerability + respawn); 0 hearts = game over.
+- **Levels:** all 3 zones are unlocked from the level screen.
+- **Audio:** theme on menu / level select / 2D game, 'scared cat' on reality shift, footsteps (louder as rats get closer) in first person, death sound when eaten.
 
 ## Project Structure
 - `index.html` — Self-contained entry point integrating Google Stitch UI screens, 2D Canvas engine, Three.js 3D horror engine, Minimap radar, and game overlays.
